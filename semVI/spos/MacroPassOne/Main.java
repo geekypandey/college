@@ -17,9 +17,11 @@ class Main {
 		try{
 			MacFile inputfile = new MacFile(filename);
 			inputfile.parse();	
+			inputfile.getMnt();
 		}catch(Exception e){
 			System.err.println("Error in parsing!");
 		}
+
 	}
 }
 
@@ -43,66 +45,79 @@ class MacFile {
 		br = new BufferedReader(new FileReader(file));
 	}	
 
-	public String parse() throws Exception{
+	public void parse() throws Exception{
 		int kptabpointer=1;
 		int mdtpointer=1;
 		int pntabpointer=1;
 		String st;
 		String output = "";
 		Boolean isname = false;
+		//reading each line from the file
+		HashMap<Integer,String> pntab = new HashMap<Integer,String>();
 		while((st = br.readLine()) != null){
 			String[] arr = st.split("\\s+|,");
-			output = ""; 
-			for(String a : arr){
-				HashMap<Integer,String> pntab = new HashMap<Integer,String>();
-				if(a.equals("MACRO")){
-					isname = true;
-					pntab.clear();
-					break;
-				}else if(isname == true){
-					//create an entry in mnt with the name and then pass through the reamining for subsequent
-					//pp,kp and insert in pntab , kptab .
-					String name = a;
-					int pp = 0;
-					int kp = 0;
+			if(arr[0].equals("")){
+				continue;
+			}
+			output = "";
+			if(arr[0].equals("MACRO")){
+				isname = true;
+				pntab.clear();
+			}else{
+				if(isname == true){
+					String name = arr[0]; //macro name
+					int pp=0;
+					int kp=0;
+					int mdtp = mdtpointer;
 					int kpdtp = kptabpointer;
 					int i;
-					for(i = 1 ; i < arr.length ; i++){
-						String parameter = arr[i];
-							
-						if(parameter.indexOf('=') > 0){
-							kp = kp+1;
-							int index = parameter.indexOf('=');
-							KpTabEntry kentry;
-							if(index == (parameter.length() - 1)){
-								//keyword parameter
-								kentry = new KpTabEntry(parameter.substring(0,index),"-");
-							}else{
-								//default parameter
-								kentry = new KpTabEntry(parameter.substring(0,index),parameter.substring(index+1));
-							}
-							kptab.put(kptabpointer,kentry);
-							kptabpointer = kptabpointer + 1;
-							pntab.put(i,parameter.substring(0,index));
+					//processing all parameters
+					for(i=1;i<arr.length;i++){
+						int index = arr[i].indexOf("=");
+						if(index < 0){
+							pp = pp +1;
+							pntab.put(i,arr[i]);
 						}else{
-							pp = pp+1;
-							pntab.put(i,parameter);
+							KpTabEntry kentry;
+							if(index == arr[i].length() - 1){
+								kentry = new KpTabEntry(arr[i].substring(0,index),"-");
+							}else{
+								kentry = new KpTabEntry(arr[i].substring(0,index),arr[i].substring(index+1,arr[i].length()));
+							}
+							pntab.put(i,arr[i].substring(0,index));
+							kptab.put(kptabpointer,kentry);
+							kptabpointer = kptabpointer + 1 ;
+							kp = kp +1;
 						}
 					}
-					System.out.println(pntab);
-					System.out.println(name + " " + pp + " "+ kp + " " + mdtpointer + " "+ kptabpointer);	
-					MntEntry entry = new MntEntry(name,pp,kp,mdtpointer,kpdtp);
-					isname = false;
-					break;
-				}
-				//now work for each model statement if present in pntab insert it as (p,#n) else same
-				System.out.println(a);
-				if(pntab.containsValue("&FIRST")){
-					System.out.println("Hello");
+					MntEntry entry = new MntEntry(name,pp,kp,mdtp,kpdtp);
+					mnt.add(entry);
+					isname = false;	
+				}else{
+					//process the model statements	
+					output = "";
+					for(String a:arr){
+						if(pntab.containsValue(a)){
+							for(Map.Entry entry : pntab.entrySet()){
+								if(a.equals(entry.getValue())){
+									output = output + " " + "(P,"+entry.getKey()+")";
+								}
+							}		
+						}else{
+							output = output + " " + a;
+						}
+					}
+					mdt.add(output);
+					mdtpointer = mdtpointer + 1;
 				}
 			}
-		}	
-		return output;
+		}
+	}
+
+	public void getMnt(){
+		for(MntEntry entry: mnt){
+			System.out.println(entry.get());
+		}
 	}
 
 }
@@ -127,6 +142,11 @@ class MntEntry {
 		this.kpdtp = kpdtp;
 	}
 
+	public String get(){
+		String output = name + " " + pp + " " + kp + " "+ mdtp + " " + kpdtp;
+		return output;
+	}
+
 }
 
 class KpTabEntry {
@@ -137,4 +157,10 @@ class KpTabEntry {
 		this.key = key;
 		this.value = value;
 	}
+
+	public String get(){
+		String output = key + " " + value;
+		return output;
+	}
+
 }
