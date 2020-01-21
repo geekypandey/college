@@ -18,6 +18,8 @@ class Main {
 			MacFile inputfile = new MacFile(filename);
 			inputfile.parse();	
 			inputfile.getMnt();
+			inputfile.getMdt();
+			inputfile.getKpTab();
 		}catch(Exception e){
 			System.err.println("Error in parsing!");
 		}
@@ -55,11 +57,13 @@ class MacFile {
 		//reading each line from the file
 		HashMap<Integer,String> pntab = new HashMap<Integer,String>();
 		while((st = br.readLine()) != null){
-			String[] arr = st.split("\\s+|,");
+			String[] arr = st.split("\\s+|,\\s*");
+			//encountering empty lines
 			if(arr[0].equals("")){
 				continue;
 			}
 			output = "";
+			//if name Macro then next line would contain macro name and parameters
 			if(arr[0].equals("MACRO")){
 				isname = true;
 				pntab.clear();
@@ -115,11 +119,31 @@ class MacFile {
 	}
 
 	public void getMnt(){
+		System.out.println("-----------------------------------");
 		for(MntEntry entry: mnt){
 			System.out.println(entry.get());
 		}
+		System.out.println("-----------------------------------\n");
 	}
 
+	public void getMdt(){
+		System.out.println("-----------------------------------");
+		int i;
+		for(i=0;i<mdt.size();i++){
+			System.out.println((i+1) + mdt.get(i));
+		}
+		System.out.println("-----------------------------------\n");
+	}
+
+	public void getKpTab(){
+		System.out.println("-----------------------------------");
+		//kptab is hashmap of <Integer,KpTabEntry>
+		for(Map.Entry<Integer,KpTabEntry> entry : kptab.entrySet()){
+			System.out.print(entry.getKey() + " ");
+			System.out.println((entry.getValue()).get());
+		}
+		System.out.println("-----------------------------------\n");
+	}
 }
 
 class MntEntry {
