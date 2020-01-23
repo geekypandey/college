@@ -90,13 +90,13 @@ class MacFile {
          System.out.println("-----------------------------------\n");
     }
 
-	public void readCall(String filename){
+	public void readCall(String filename)throws Exception{
 		File file = new File(filename);
 		br = new BufferedReader(new FileReader(file));
 		String st;
 		//process the call and form an aptab
 		//And then there is just substitution work	
-		
+				
 	}
 	
 }
