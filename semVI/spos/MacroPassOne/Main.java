@@ -20,6 +20,9 @@ class Main {
 			inputfile.getMnt();
 			inputfile.getMdt();
 			inputfile.getKpTab();
+			inputfile.writeMnt("mnt.txt");
+			inputfile.writeMdt("mdt.txt");
+			inputfile.writeKpTab("kptab.txt");
 		}catch(Exception e){
 			System.err.println("Error in parsing!");
 		}
@@ -143,6 +146,32 @@ class MacFile {
 			System.out.println((entry.getValue()).get());
 		}
 		System.out.println("-----------------------------------\n");
+	}
+	public void writeMnt(String fname)throws Exception{
+		BufferedWriter writer = new BufferedWriter(new FileWriter(fname));
+		for(MntEntry entry: mnt){
+			writer.write(entry.get() + "\n");
+		}
+		writer.close();
+	}
+
+	public void writeMdt(String fname)throws Exception{
+		BufferedWriter writer = new BufferedWriter(new FileWriter(fname));
+		int i;
+		for(i=0;i<mdt.size();i++){
+			writer.write(mdt.get(i) + "\n");
+		}
+		writer.close();
+	}
+
+	public void writeKpTab(String fname)throws Exception{
+		//kptab is hashmap of <Integer,KpTabEntry>
+		BufferedWriter writer = new BufferedWriter(new FileWriter(fname));
+		for(Map.Entry<Integer,KpTabEntry> entry : kptab.entrySet()){
+			writer.write(entry.getKey() + " ");
+			writer.write((entry.getValue()).get() + "\n");
+		}
+		writer.close();
 	}
 }
 
