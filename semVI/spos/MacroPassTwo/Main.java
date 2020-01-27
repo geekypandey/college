@@ -9,9 +9,10 @@ class Main {
 	 	MacFile input = new MacFile(); 				
 		try {
 			input.readData();
-			input.getMnt();
-			input.getMdt();
-			input.getKpTab();
+		//	input.getMnt();
+		//	input.getMdt();
+		//	input.getKpTab();
+			input.readCall("call.asm");
 		}catch(Exception e){
 			System.err.println("Error in parsing");
 		}			
@@ -95,6 +96,12 @@ class MacFile {
 		br = new BufferedReader(new FileReader(file));
 		String st;
 		//process the call and form an aptab
+		while((st = br.readLine()) != null){
+			String[] arr = st.split("\\s+|,\\s*");
+			for(String a:arr){
+				System.out.println(a);
+			}
+		}
 		//And then there is just substitution work	
 				
 	}

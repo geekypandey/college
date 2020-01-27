@@ -1,5 +1,5 @@
 MACRO
-M1 &X,&Y,&A=AREG,&B=BREG
+M1 &X,&Y,&A=,&B=BREG
 MOVER &A,&X
 ADD &A,='1'
 MOVER &A,&Y
