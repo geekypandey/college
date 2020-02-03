@@ -6,5 +6,6 @@ if [ "$?" -ne "0" ]; then
    	   exit 1
 fi
 java Main
+echo "\n"
 ls *.class 
 rm *.class
