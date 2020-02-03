@@ -5,8 +5,8 @@ if [ "$?" -ne "0" ]; then
 	   echo "Compilation error"
    	   exit 1
 fi
-echo -e "\n\n"
+echo "\n\n"
 java Main
-echo -e "\n\n"
+echo "\n\n"
 ls *.class 
 rm *.class
