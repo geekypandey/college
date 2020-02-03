@@ -9,15 +9,14 @@ class Main {
 	 	MacFile input = new MacFile(); 				
 		try {
 			input.readData();
-		//	input.getMnt();
-		//	input.getMdt();
-		//	input.getKpTab();
+			input.getMnt();
+			input.getMdt();
+			input.getKpTab();
 			input.readCall("call.asm");
 		}catch(Exception e){
 			System.err.println("Error in parsing");
 		}			
 	}
-	
 }
 
 
@@ -95,24 +94,35 @@ class MacFile {
 		File file = new File(filename);
 		br = new BufferedReader(new FileReader(file));
 		String st;
-		//process the call and form an aptab
-		while((st = br.readLine()) != null){
+		//do the whole process for each call
+        while((st = br.readLine()) != null){
 			String[] arr = st.split("\\s+|,\\s*");
-			for(String a:arr){
-				System.out.println(a);
-			}
+			int i=0;
+            //checking for the macro name in mnt..assuming that it is present 
+            for(i=0;i<mnt.size();i++){
+                if(arr[0].equals(mnt.get(i).name)){
+                    System.out.println((mnt.get(i).pp+mnt.get(i).kp));
+                }
+            } 
+            //get the bucket size from above and get the parameters to match
+            //the same . If not search in kptab according to the kpdtp     
+			for(i=0;i<arr.length;i++){
+                int equal_index = arr[i].indexOf('=');
+				if(equal_index < 0)
+                    System.out.println(arr[i]);
+			    else
+                    System.out.println(arr[i].substring(equal_index+1,arr[i].length()));
+            }
+			System.out.println("\n");
 		}
-		//And then there is just substitution work	
-				
 	}
-	
 }
 
 class MntEntry {
 	/*
-	 Class for entry in Macro Name Table(MNT).Parameters containing MACRO NAME(name),POSTIONAL PARAMETERS(pp),
-	 KEYWORD PARAMETERS(kp),MACRO DEFINITION TABLE POINTER(mdtp) & KEYWORD PARAMETER DESCRIPTION TABLE POINTER(kpdtp).
-	 */
+    Class for entry in Macro Name Table(MNT).Parameters containing MACRO NAME(name),POSTIONAL PARAMETERS(pp),
+	KEYWORD PARAMETERS(kp),MACRO DEFINITION TABLE POINTER(mdtp) & KEYWORD PARAMETER DESCRIPTION TABLE POINTER(kpdtp).
+	*/
 	
 	String name; 
 	int pp;  
