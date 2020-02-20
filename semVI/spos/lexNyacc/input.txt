@@ -1,0 +1,2 @@
+Fedora - yum install flex bison
+Ubuntu - sudo apt-get install flex bison

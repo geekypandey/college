@@ -1,32 +1,16 @@
 %{
 #include<stdio.h>
+int space_count = 0;
+int enter_count = 0;
+int char_count = 0;
 %}
 
+
 %%
-is |
-am |
-are |
-were |
-was |
-be | 
-being |
-been |
-do |
-does |
-did |
-will |
-would |
-should |
-can |
-could |
-has |
-have |
-had |
-go  {printf("%s: is a verb\n",yytext);}
+\n {enter_count++;}
+[ ] {space_count++;}
+. {char_count++;}
 
-[a-zA-Z]+ {printf("%s: is not a verb\n",yytext);}
-
-.|\n {ECHO;}
 %%
 
 int yywrap(){
@@ -34,5 +18,10 @@ int yywrap(){
 }
 
 main(){
+    extern FILE *yyin;
+    yyin = fopen("input.txt","r");
 	yylex();
+    printf("Word count :%d\n",char_count);
+    printf("Space count :%d\n",space_count);
+    printf("Enter count :%d\n",enter_count);
 }
